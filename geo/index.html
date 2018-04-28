@@ -35,10 +35,16 @@ and open the template in the editor.
             }
             
             function getFile(){
-                $.get('somefile.txt',{'_':Date.now()},function (data){
-                    navigator.geolocation.getCurrentPosition(success, error, options);
-                    if(isStarted){
-                        getFile();
+                $.ajax({
+                    type: 'GET',
+                    url: 'somefile.txt',
+                    headers:{'Content-Encoding':'none'},
+                    data: {'_':Date.now()},
+                    complete: function() {
+                        navigator.geolocation.getCurrentPosition(success, error, options);
+                        if(isStarted){
+                            getFile();
+                        }
                     }
                 });
             }
