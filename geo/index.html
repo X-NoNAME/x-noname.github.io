@@ -46,16 +46,14 @@ and open the template in the editor.
             function stop(){
                 isStarted = false;
             }
-            
-            $(document).ready(function (){
-                $('#controls').show();
-            });
-            
-            
-          
         </script>
     </head>
     <body>
+        <script>
+            $(document).ready(function (){
+                $('#controls').show();
+            });
+        </script>
         <div id="controls" style="display: none"><button onclick="start();">Start</button><button onclick="stop();">Stop</button></div>
         <textarea id="results"></textarea>
 
