@@ -20,7 +20,7 @@ and open the template in the editor.
             };
             function success(pos) {
               var crd = pos.coords;
-              $('#results').text(`${Date.now()},${crd.latitude},${crd.longitude},${crd.accuracy}\n`);
+              $('#results').text($('#results').text()+`${Date.now()},${crd.latitude},${crd.longitude},${crd.accuracy}\n`);
             }
             function error(err) {
                 $('#results').text($('#results').text()+`${Date.now()},${err.code} - ${err.message}\n`);
