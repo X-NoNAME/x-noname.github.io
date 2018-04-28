@@ -23,7 +23,7 @@ and open the template in the editor.
               $('#results').text(`${Date.now()},${crd.latitude},${crd.longitude},${crd.accuracy}\n`);
             }
             function error(err) {
-                $('#results').text(`${Date.now()},${err.code} - ${err.message}\n`);
+                $('#results').text($('#results').text()+`${Date.now()},${err.code} - ${err.message}\n`);
             }
             
             var isStarted = false;
