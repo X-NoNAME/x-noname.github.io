@@ -15,10 +15,24 @@ function get_cookie ( cookie_name )
     return null;
 }
 
+function setHeader(xhr) {
+        xhr.setRequestHeader('Authorization', 'OAuth '+get_cookie('yat'));
+    }
+
 function go(){
     $.getJSON("https://cloud-api.yandex.net/v1/disk/resources/last-uploaded&limit=10&media_type=image")
             .done(function(data){
                 console.log(data);
     });
+    $.ajax({
+          url: 'https://cloud-api.yandex.net/v1/disk/resources/last-uploaded&limit=10&media_type=image',
+          type: 'GET',
+          dataType: 'json',
+          success: function(data) { 
+                console.log(data);
+            },
+          error: function(data) { console.log('ERROR', data); },
+          beforeSend: setHeader
+        });
     
 }
