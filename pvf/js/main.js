@@ -42,7 +42,14 @@ function showRandom(folder,total) {
                 var content = $("#content");
                 content.html('');
                 if(media_type=="image"){
-                    $("<img/>",{src:path, title:name}).appendTo(content);
+                    var img = $("<img/>",{src:path, title:name});
+                    img.appendTo(content);
+
+                    EXIF.getData($('img')[0], function() {
+                        var make = EXIF.getTag(this, "Make");
+                        var orientation = EXIF.getTag(this, "Orientation");
+                        console.log(make,orientation);
+                    });
                 }else if(media_type=="video"){
                     $("<video/>",{src:path, title:name, autoplay:"autoplay"}).appendTo(content);
                 }
