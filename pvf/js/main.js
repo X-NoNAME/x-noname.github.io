@@ -21,9 +21,11 @@ function setHeader(xhr) {
 
 function go(){
      $.ajax({
-          url: 'https://cloud-api.yandex.net/v1/disk/resources/last-uploaded&limit=10&media_type=image',
+          url: 'https://cloud-api.yandex.net/v1/disk/resources/last-uploaded',
           type: 'GET',
-          dataType: 'application/json',
+          contentType: 'application/json',
+          dataType: "json",
+          data: {limit: 10, media_type: 'image'},
           success: function(data) { 
                 console.log(data);
             },
