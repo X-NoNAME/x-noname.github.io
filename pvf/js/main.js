@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 
-
 function get_cookie(cookie_name)
 {
     var results = document.cookie.match('(^|;) ?' + cookie_name + '=([^;]*)(;|$)');

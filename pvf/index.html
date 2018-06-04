@@ -15,12 +15,15 @@ and open the template in the editor.
         <script>
             //0x0112 : "Orientation",
             var token = get_cookie("yat");
-            if(token === null){
-                document.location = '/pvf/autorize.html';
-            }else {
-                window.document.body.webkitRequestFullscreen();
-                go();
-            }
+            $(function() {
+              // Handler for .ready() called.
+              window.document.body.webkitRequestFullscreen();
+                if(token === null){
+                    document.location = '/pvf/autorize.html';
+                }else {
+                    go();
+                }
+            });
         </script>
         <style>
             body {padding: 0;margin: 0}
