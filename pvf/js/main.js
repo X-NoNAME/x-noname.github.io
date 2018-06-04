@@ -5,6 +5,7 @@
  */
 
 function mmax(){
+    alert("1");
     window.document.body.webkitRequestFullscreen();
 }
 
@@ -48,7 +49,6 @@ function showRandom(folder,total) {
                 if(media_type=="image"){
                     var img = $("<img/>",{src:path, title:name});
                     img.appendTo(content);
-                    mmax();
                 }else if(media_type=="video"){
                     $("<video/>",{src:path, title:name, autoplay:"autoplay"}).appendTo(content);
                 }
@@ -73,7 +73,9 @@ function getFiles(folder) {
         success: function (data) {
             console.log(data);
             var total = data._embedded.total;
+            mmax();
             showRandom(folder,total);
+            
         },
         error: function (data) {
             console.log('ERROR', data);
