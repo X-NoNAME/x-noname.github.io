@@ -12,7 +12,7 @@ and open the template in the editor.
         <script>
             var token = /access_token=([^&]+)/.exec(document.location.hash)[1];
             var exp = /expires_in=([^&]+)/.exec(document.location.hash)[1];
-            document.cookie = "yat="+token+";path=/pvf;expires="+(new Date (exp)).toGMTString();
+            document.cookie = "yat="+token+"; path=/pvf; expires="+(new Date (exp*1000)).toGMTString();
             document.location = "/pvf/index.html";
         </script>
             

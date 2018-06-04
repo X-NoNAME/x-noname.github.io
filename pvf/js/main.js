@@ -14,3 +14,11 @@ function get_cookie ( cookie_name )
   else
     return null;
 }
+
+function go(){
+    $.getJSON("https://cloud-api.yandex.net/v1/disk/resources/last-uploaded&limit=10&media_type=image")
+            .done(function(data){
+                console.log(data);
+    });
+    
+}
