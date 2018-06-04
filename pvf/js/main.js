@@ -5,7 +5,7 @@
  */
 
 function mmax(){
-    alert("1");
+    
     window.document.body.webkitRequestFullscreen();
 }
 
