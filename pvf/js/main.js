@@ -44,12 +44,6 @@ function showRandom(folder,total) {
                 if(media_type=="image"){
                     var img = $("<img/>",{src:path, title:name});
                     img.appendTo(content);
-
-                    EXIF.getData($('img')[0], function() {
-                        var make = EXIF.getTag(this, "Make");
-                        var orientation = EXIF.getTag(this, "Orientation");
-                        console.log(make,orientation);
-                    });
                 }else if(media_type=="video"){
                     $("<video/>",{src:path, title:name, autoplay:"autoplay"}).appendTo(content);
                 }
