@@ -4,6 +4,11 @@
  * and open the template in the editor.
  */
 
+function mmax(){
+    window.document.body.webkitRequestFullscreen();
+}
+
+
 function get_cookie(cookie_name)
 {
     var results = document.cookie.match('(^|;) ?' + cookie_name + '=([^;]*)(;|$)');
@@ -43,6 +48,7 @@ function showRandom(folder,total) {
                 if(media_type=="image"){
                     var img = $("<img/>",{src:path, title:name});
                     img.appendTo(content);
+                    mmax();
                 }else if(media_type=="video"){
                     $("<video/>",{src:path, title:name, autoplay:"autoplay"}).appendTo(content);
                 }

@@ -17,13 +17,14 @@ and open the template in the editor.
             var token = get_cookie("yat");
             $(function() {
               // Handler for .ready() called.
-              window.document.body.webkitRequestFullscreen();
+              
                 if(token === null){
                     document.location = '/pvf/autorize.html';
                 }else {
                     go();
                 }
             });
+            
         </script>
         <style>
             body {padding: 0;margin: 0}
@@ -32,7 +33,7 @@ and open the template in the editor.
             video {width:100%; min-height: 100%;height: 100%;}
         </style>
     </head>
-    <body>
+    <body onclick="mmax();">
         <div id="content"></div>
     </body>
 </html>
