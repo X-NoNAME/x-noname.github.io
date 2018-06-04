@@ -18,13 +18,8 @@ and open the template in the editor.
             if(token === null){
                 document.location = '/pvf/autorize.html';
             }else {
-                var doc = window.document;
-                var docEl = doc.documentElement;
-                var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
-                requestFullScreen.call(docEl);
-                
+                window.document.body.webkitRequestFullscreen();
                 go();
-                
             }
         </script>
         <style>
