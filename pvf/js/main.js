@@ -47,9 +47,12 @@ function del(){
             success: function (data) {
                 hideMenuContent();
             },
-            error: function (data) {
-                alert("Ошибка при удалении");
-                $("#menuitems").hide();
+            error: function(jqXHR, textStatus) {
+                if(jqXHR.status==403){
+                    window.location = '/pvf/autorize.html'; // redirect page
+                }else {
+                    alert("Unknown error: "+textStatus);
+                }
             },
             beforeSend: setHeader
         });
@@ -120,8 +123,12 @@ function showRandom() {
             }
             
         },
-        error: function (data) {
-            console.log('ERROR', data);
+        error: function(jqXHR, textStatus) {
+                if(jqXHR.status==403){
+                    window.location = '/pvf/autorize.html'; // redirect page
+                }else {
+                    alert("Unknown error: "+textStatus);
+                }
         },
         beforeSend: setHeader
     });
@@ -141,8 +148,12 @@ function getFiles() {
             showRandom();
             
         },
-        error: function (data) {
-            console.log('ERROR', data);
+        error: function (jqXHR, textStatus) {
+            if(jqXHR.status==403){
+                    window.location = '/pvf/autorize.html'; // redirect page
+                }else {
+                    alert("Unknown error: "+textStatus);
+                }
         },
         beforeSend: setHeader
     });
@@ -166,8 +177,12 @@ function getFolders() {
             }
             
         },
-        error: function (data) {
-            console.log('ERROR', data);
+        error: function (jqXHR, textStatus) {
+            if(jqXHR.status==403){
+                    window.location = '/pvf/autorize.html'; // redirect page
+                }else {
+                    alert("Unknown error: "+textStatus);
+                }
         },
         beforeSend: setHeader
     });
