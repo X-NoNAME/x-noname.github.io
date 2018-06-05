@@ -74,7 +74,7 @@ function playPause(){
 function play(){
     hideMenuContent();
     isPaused = false;
-    timerId = setTimeout(showRandom, 100, folder, total);
+    timerId = setTimeout(showRandom, 100);
 }
 
 function stop(){
@@ -99,6 +99,14 @@ function setHeader(xhr) {
 
 function go() {
     getFolders();
+    $('content').on( "swipe", swipeHandler );
+}
+
+function swipeHandler( event ){
+    console.log('swipe',event);
+    stop();
+    isPaused = false;
+    showRandom();
 }
 
 function showRandom() {
@@ -122,7 +130,7 @@ function showRandom() {
                 content.data('path',path);
                 showPhotoOrVideo({name:name, path:path, file:file, media_type:media_type, size:size},content);
                 if(!isPaused){
-                    timerId = setTimeout(showRandom, 30000, folder, total);
+                    timerId = setTimeout(showRandom, 30000);
                 }                
             }
         },
