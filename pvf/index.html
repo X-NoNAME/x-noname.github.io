@@ -38,29 +38,45 @@ and open the template in the editor.
               height:100%;
               display: block;
               background-repeat:no-repeat;
-              background-size:contain;
+
               background-position: center;
               
             }
-            div#menu { display: block; position: absolute; right: 20px; bottom: 20px; color:silver; font-size: 32px; display:none}
+            div#menu { display: block; position: absolute; right: 20px; bottom: 20px; color:silver; font-size: 48px; cursor:pointer}
             div#menuitems {    
                 display: block;
                 position: absolute;
                 right: 20px;
                 top: 40px;
                 color: silver;
-                border: 1px solid;
                 padding: 5px;
+            }
+            ul {
+                margin: 0;
+                padding: 0;
+            }
+            li {
+                margin: 0;
+                padding: 0;
+                display: block;
+                font-size: 48px;
+                cursor: pointer;
+
             }
         </style>
     </head>
     <body>
         <div id="content" onclick="performClick();"></div>
-        <div id="menu" onclick="showMenuContent();">⚙️</div>
+        <div id="menu" onclick="showMenuContent();" style="opacity: 0.5">⚙️</div>
         <div id="menuitems" style="display:none">
             <ul>
-                <li onclick="del()">Переместить в корзину</li>
-                <li onclick="playPause()">Остановить/Продолжить</li>
+                <li onclick="del()"> 🗑 </li>
+                <li id="plpa" onclick="playPause()"> ▶️ </li>
+                <li id="next" onclick="stop();play();"> ⏭️ </li>
+                <li> </li>
+                <li id="imgstyle" onclick="maximize()"> ↔️ </li>
+
+
             </ul>
         </div>
     </body>

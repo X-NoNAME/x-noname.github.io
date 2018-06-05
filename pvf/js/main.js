@@ -8,14 +8,27 @@ var folder;
 var total;
 var timerId;
 
+var imgstyle='contain';
+
 function performClick(){
     if(!document.webkitIsFullScreen){
         window.document.body.webkitRequestFullscreen();
-        hideMenu();
+
     }else {
         window.document.webkitCancelFullScreen();
-        showMenu();
+
     }
+}
+
+function maximize() {
+    if(imgstyle==="contain"){
+        imgstyle="cover"
+        $("#imgstyle").text(" ↕️ ");
+    }else {
+        imgstyle="contain"
+        $("#imgstyle").text(" ↔️ ");
+    }
+    $("div.img").css("background-size",imgstyle);
 }
 
 function hideMenu(){
@@ -26,10 +39,8 @@ function showMenu(){
     $("#menu").show();
 }
 
-var cerrentPath;
 function showMenuContent(){
-    $("#menuitems").show();
-    cerrentPath = $('#content').data('path');
+    $("#menuitems").toggle();
 }
 
 function hideMenuContent(){
@@ -37,33 +48,36 @@ function hideMenuContent(){
 }
 
 function del(){
-    if(cerrentPath && confirm("Вы точно хотите переместить файл "+cerrentPath+"  в корзину?")){
-        stop();
+    stop();
+    var currentPath = $('#content').data('path');
+    if(confirm("Вы точно хотите переместить файл "+currentPath+"  в корзину?")) {
+
         $.ajax({
-            url: 'https://cloud-api.yandex.net/v1/disk/resources?path='+encodeURIComponent(cerrentPath),
+            url: 'https://cloud-api.yandex.net/v1/disk/resources?path=' + encodeURIComponent(currentPath),
             type: 'DELETE',
             contentType: 'application/json',
             dataType: "json",
             success: function (data) {
-                hideMenuContent();
-            },
-            error: function(jqXHR, textStatus) {
-                if(jqXHR.status==403){
-                    window.location = '/pvf/autorize.html'; // redirect page
-                }else {
-                    alert("Unknown error: "+textStatus);
-                }
-            },
-            always: function (){
                 play();
+            },
+            error: function (jqXHR, textStatus) {
+                if (jqXHR.status == 403) {
+                    window.location = '/pvf/autorize.html'; // redirect page
+                } else {
+                    alert("Unknown error: " + textStatus);
+                }
+
             },
             beforeSend: setHeader
         });
     }
-    hideMenuContent();
 }
 
+var playt = " ▶️ ";
+var pauset = "⏸";
+
 function playPause(){
+
     if(isPaused){
         play();
     }else {
@@ -72,13 +86,18 @@ function playPause(){
 }
 
 function play(){
-    hideMenuContent();
+    window.console.log('play');
+    $("#plpa").text(playt);
+
     isPaused = false;
-    timerId = setTimeout(showRandom, 100);
+    clearTimeout(timerId);
+    timerId = setTimeout(showRandom, 10);
 }
 
 function stop(){
-    hideMenuContent();
+    window.console.log('stop');
+    $("#plpa").text(pauset);
+
     isPaused = true;
     clearTimeout(timerId);
 }
@@ -106,6 +125,7 @@ function swipeHandler( event ){
     console.log('swipe',event);
     clearTimeout(timerId);
     isPaused = false;
+    $("#plpa").text(pauset);
     timerId = setTimeout(showRandom, 1);
 }
 
@@ -235,7 +255,7 @@ function showPhotoOrVideo(mediaObject,content){
                 video[0].playbackRate=0.4;
                 video[0].play();
             }else {
-                var img = $("<div/>",{class:'img',title:mediaObject.name, style:'background-image:url('+mediaObject.file+')'});
+                var img = $("<div/>",{class:'img',title:mediaObject.name, style:'background-size:'+imgstyle+';background-image:url('+mediaObject.file+')'});
                 img.appendTo(content);
             }
           }else {
@@ -245,7 +265,7 @@ function showPhotoOrVideo(mediaObject,content){
         xhr.send();
     }else if(mediaObject.media_type==="image"){
         console.log(4);
-        var img = $("<div/>",{class:'img',title:mediaObject.name, style:'background-image:url('+mediaObject.file+')'});
+        var img = $("<div/>",{class:'img',title:mediaObject.name, style:'background-size:'+imgstyle+';background-image:url('+mediaObject.file+')'});
         img.appendTo(content);
     }else {
         $("<video/>",{src:mediaObject.file, title:mediaObject.name, autoplay:"autoplay"}).appendTo(content);
