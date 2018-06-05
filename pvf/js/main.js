@@ -47,7 +47,7 @@ function showRandom(folder,total) {
                 var content = $("#content");
                 content.html('');
                 if(media_type=="image"){
-                    var img = $("<img/>",{src:path, title:name});
+                    var img = $("<div/>",{class:'img',title:name, style:'background-image:url('+path+')'});
                     img.appendTo(content);
                 }else if(media_type=="video"){
                     $("<video/>",{src:path, title:name, autoplay:"autoplay"}).appendTo(content);
