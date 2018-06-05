@@ -38,6 +38,7 @@ function hideMenuContent(){
 }
 
 function del(){
+    if (!isPaused)playPause();
     if(cerrentPath && confirm("Вы точно хотите переместить файл "+cerrentPath+"  в корзину?")){
         $.ajax({
             url: 'https://cloud-api.yandex.net/v1/disk/resources?path='+encodeURIComponent(cerrentPath),
@@ -54,8 +55,12 @@ function del(){
                     alert("Unknown error: "+textStatus);
                 }
             },
+            always: function (){
+                if (isPaused)playPause();
+            },
             beforeSend: setHeader
         });
+        
     }
     hideMenuContent();
 }
@@ -63,7 +68,7 @@ function del(){
 function playPause(){
     if(isPaused){
         isPaused=!isPaused;
-        timerId = setTimeout(showRandom, 30000, folder, total);
+        timerId = setTimeout(showRandom, 1000, folder, total);
     }else {
         isPaused=!isPaused;
         clearTimeout(timerId);
