@@ -3,11 +3,71 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+var isPaused = false;
+var folder;
+var total;
+var timerId;
 
-function mmax(){
+function performClick(){
+    if(!document.webkitIsFullScreen){
+        window.document.body.webkitRequestFullscreen();
+        hideMenu();
+    }else {
+        window.document.webkitCancelFullScreen();
+        showMenu();
+    }
     
-    window.document.body.webkitRequestFullscreen();
 }
+
+function hideMenu(){
+    $("#menu").hide();
+}
+
+function showMenu(){
+    $("#menu").show();
+}
+
+var cerrentPath;
+function showMenuContent(){
+    $("#menuitems").show();
+    cerrentPath = $('#content').data('path');
+}
+
+function hideMenuContent(){
+    $("#menuitems").hide();
+}
+
+function del(){
+    if(cerrentPath && confirm("Вы точно хотите переместить файл "+cerrentPath+"  в корзину?")){
+        $.ajax({
+            url: 'https://cloud-api.yandex.net/v1/disk/resources?path='+encodeURIComponent(cerrentPath),
+            type: 'DELETE',
+            contentType: 'application/json',
+            dataType: "json",
+            success: function (data) {
+                hideMenuContent();
+            },
+            error: function (data) {
+                alert("Ошибка при удалении");
+                $("#menuitems").hide();
+            },
+            beforeSend: setHeader
+        });
+    }
+    hideMenuContent();
+}
+
+function playPause(){
+    if(isPaused){
+        isPaused=!isPaused;
+        timerId = setTimeout(showRandom, 30000, folder, total);
+    }else {
+        isPaused=!isPaused;
+        clearTimeout(timerId);
+    }
+    hideMenuContent();    
+}
+
 
 
 function get_cookie(cookie_name)
@@ -28,7 +88,7 @@ function go() {
     getFolders();
 }
 
-function showRandom(folder,total) {
+function showRandom() {
     
     var pos = Math.floor(Math.random() * total+1); 
     
@@ -37,22 +97,26 @@ function showRandom(folder,total) {
         type: 'GET',
         contentType: 'application/json',
         dataType: "json",
-        data: { path: folder, limit:1, offset:pos, fields:'_embedded.items.media_type,_embedded.items.file,_embedded.items.name' },
+        data: { path: folder, limit:1, offset:pos, fields:'_embedded.items.media_type,_embedded.items.file,_embedded.items.name,_embedded.items.path' },
         success: function (data) {
             console.log('File',data);
             if(data._embedded.items[0]){
                 var name = data._embedded.items[0].name;
-                var path = data._embedded.items[0].file;
+                var file = data._embedded.items[0].file;
+                var path = data._embedded.items[0].path;
                 var media_type = data._embedded.items[0].media_type;
                 var content = $("#content");
                 content.html('');
+                content.data('path',path);
                 if(media_type=="image"){
-                    var img = $("<div/>",{class:'img',title:name, style:'background-image:url('+path+')'});
+                    var img = $("<div/>",{class:'img',title:name, style:'background-image:url('+file+')'});
                     img.appendTo(content);
                 }else if(media_type=="video"){
-                    $("<video/>",{src:path, title:name, autoplay:"autoplay"}).appendTo(content);
+                    $("<video/>",{src:file, title:name, autoplay:"autoplay"}).appendTo(content);
                 }
-                setTimeout(showRandom, 30000, folder, total);
+                if(!isPaused){
+                    timerId = setTimeout(showRandom, 30000, folder, total);
+                }                
             }
             
         },
@@ -63,7 +127,7 @@ function showRandom(folder,total) {
     });
 }
 
-function getFiles(folder) {
+function getFiles() {
     $.ajax({
         url: 'https://cloud-api.yandex.net/v1/disk/resources',
         type: 'GET',
@@ -72,9 +136,9 @@ function getFiles(folder) {
         data: { path: folder, fields: '_embedded.total'},
         success: function (data) {
             console.log(data);
-            var total = data._embedded.total;
-            mmax();
-            showRandom(folder,total);
+            var t = data._embedded.total;
+            total = t;
+            showRandom();
             
         },
         error: function (data) {
@@ -95,7 +159,8 @@ function getFolders() {
         success: function (data) {
             console.log(data.system_folders.photostream);
             if(data.system_folders.photostream){
-                getFiles(data.system_folders.photostream);
+                folder = data.system_folders.photostream;
+                getFiles();
             }else {
                 console.log('Can\'t find data.system_folders.photostream');
             }
