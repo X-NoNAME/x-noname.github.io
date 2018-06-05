@@ -222,14 +222,17 @@ function showPhotoOrVideo(mediaObject,content){
                 });
                 video[0].src = window.URL.createObjectURL(blobVideo);
                 video.appendTo(content);
-                video[0].onended=function() {
-                    setTimeout(function (){
-                        console.log('playAgain');
-                        video[0].currentTime = 0;
-                        video[0].play();
-                        console.log('playAgain ok', this);
-                    },5000);
-                };
+//                video[0].onended=function() {
+//                    setTimeout(function (){
+//                        console.log('playAgain');
+//                        video[0].currentTime = 0;
+//                        video[0].play();
+//                        console.log('playAgain ok', this);
+//                    },5000);
+//                };
+                video[0].loop=true;
+                video[0].defaultPlaybackRate=0.4;
+                video[0].playbackRate=0.4;
                 video[0].play();
             }else {
                 var img = $("<div/>",{class:'img',title:mediaObject.name, style:'background-image:url('+mediaObject.file+')'});
