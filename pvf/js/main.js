@@ -99,14 +99,14 @@ function setHeader(xhr) {
 
 function go() {
     getFolders();
-    $('content').on( "swipe", swipeHandler );
+    $('#content').on( "flick", swipeHandler );
 }
 
 function swipeHandler( event ){
     console.log('swipe',event);
-    stop();
+    clearTimeout(timerId);
     isPaused = false;
-    showRandom();
+    timerId = setTimeout(showRandom, 1);
 }
 
 function showRandom() {
