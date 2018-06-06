@@ -23,10 +23,10 @@ function performClick(){
 function maximize() {
     if(imgstyle==="contain"){
         imgstyle="cover"
-        $("#imgstyle").text(" \xE2\x86\x95 ");
+        $("#imgstyle").html('<img src="img/horizontal.png" alt="Horizontal crop"/>');
     }else {
         imgstyle="contain"
-        $("#imgstyle").text(" \xE2\x86\x94 ");
+        $("#imgstyle").html('<img src="img/vertical.png" alt="Vertical crop"/>');
     }
     $("div.img").css("background-size",imgstyle);
 }
@@ -48,9 +48,8 @@ function hideMenuContent(){
 }
 
 function del(){
-    stop();
     var currentPath = $('#content').data('path');
-    if(confirm("Вы точно хотите переместить файл "+currentPath+"  в корзину?")) {
+    if(true) {
 
         $.ajax({
             url: 'https://cloud-api.yandex.net/v1/disk/resources?path=' + encodeURIComponent(currentPath),
@@ -73,8 +72,6 @@ function del(){
     }
 }
 
-var playt = " \xE2\x96\xB6 ";
-var pauset = " \xE2\x8F\xB3 ";
 
 function playPause(){
 
@@ -86,18 +83,15 @@ function playPause(){
 }
 
 function play(){
-    window.console.log('play');
-    $("#plpa").text(playt);
-
+    $("#plpa").html('<img src="img/play.png" alt="Stop"/>');
+    
     isPaused = false;
     clearTimeout(timerId);
     timerId = setTimeout(showRandom, 10);
 }
 
 function stop(){
-    window.console.log('stop');
-    $("#plpa").text(pauset);
-
+    $("#plpa").html('<img src="img/pause.png" alt="Play"/>');
     isPaused = true;
     clearTimeout(timerId);
 }
@@ -118,15 +112,6 @@ function setHeader(xhr) {
 
 function go() {
     getFolders();
-    $('#content').on( "flick", swipeHandler );
-}
-
-function swipeHandler( event ){
-    console.log('swipe',event);
-    clearTimeout(timerId);
-    isPaused = false;
-    $("#plpa").text(pauset);
-    timerId = setTimeout(showRandom, 1);
 }
 
 function showRandom() {

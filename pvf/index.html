@@ -51,6 +51,14 @@ and open the template in the editor.
                 color: silver;
                 padding: 5px;
             }
+            div#confirm {
+                position: absolute;
+                right: 160px;
+                top: 40px;
+                font-size: 48px;
+                background-color: coral;
+                padding: 20px;
+            }
             ul {
                 margin: 0;
                 padding: 0;
@@ -61,23 +69,27 @@ and open the template in the editor.
                 display: block;
                 font-size: 48px;
                 cursor: pointer;
-
+            }
+            input[type="button"] {
+                font-size: 48px;
             }
         </style>
     </head>
     <body>
         <div id="content" onclick="performClick();"></div>
-        <div id="menu" onclick="showMenuContent();" style="opacity: 0.5">⚙️</div>
+        <div id="menu" onclick="showMenuContent();" style="opacity: 0.3"><img src="img/settings.png" style="width: 64px;height: 64px" alt="Settings"/></div>
         <div id="menuitems" style="display:none">
             <ul>
-                <li onclick="del()"> \xF0\x9F\x9A\xBD </li>
-                <li id="plpa" onclick="playPause()"> \xE2\x96\xB6 </li>
-                <li id="next" onclick="stop();play();"> \xE2\x8F\xA9 </li>
+                <li onclick="stop();$('#confirm').show();"><img src="img/delete.png" alt="delete"/></li>
+                <li id="plpa" onclick="playPause()"><img src="img/play.png" alt="Stop"/></li>
+                <li id="next" onclick="stop();play();"><img src="img/next.png" alt="Next photo"/></li>
                 <li> </li>
-                <li id="imgstyle" onclick="maximize()"> \xE2\x86\x94 </li>
-
-
+                <li id="imgstyle" onclick="maximize()"><img src="img/vertical.png" alt="Vertical crop"/></li>
             </ul>
+        </div>
+        <div id="confirm" style="display:none">Удалить фото?
+            <input type="button" value="Да" onclick="$('#confirm').hide();del()"/>
+            <input type="button" value="Отмена" onclick="play();$('#confirm').hide();"/>
         </div>
     </body>
 </html>
