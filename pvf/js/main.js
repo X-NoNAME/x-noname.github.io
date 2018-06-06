@@ -23,10 +23,10 @@ function performClick(){
 function maximize() {
     if(imgstyle==="contain"){
         imgstyle="cover"
-        $("#imgstyle").text(" ↕️ ");
+        $("#imgstyle").text(" \xE2\x86\x95 ");
     }else {
         imgstyle="contain"
-        $("#imgstyle").text(" ↔️ ");
+        $("#imgstyle").text(" \xE2\x86\x94 ");
     }
     $("div.img").css("background-size",imgstyle);
 }
@@ -73,8 +73,8 @@ function del(){
     }
 }
 
-var playt = " ▶️ ";
-var pauset = "⏸";
+var playt = " \xE2\x96\xB6 ";
+var pauset = " \xE2\x8F\xB3 ";
 
 function playPause(){
 
