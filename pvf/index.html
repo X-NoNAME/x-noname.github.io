@@ -79,11 +79,12 @@ and open the template in the editor.
             }
             
             @media all and (max-height: 400px) { li { width: 32px; } }
+            @media all and (max-width: 400px) { li { width: 32px; } }
         </style>
     </head>
     <body>
         <div id="content" onclick="performClick();"></div>
-        <div id="menu" onclick="showMenuContent();" style="opacity: 0.3"><img src="img/settings.png" style="width: 64px;height: 64px" alt="Settings"/></div>
+        <div id="menu" onclick="showMenuContent();" style="opacity: 0.3"><img src="img/settings.png" style="width: 32px;height: 32px" alt="Settings"/></div>
         <div id="menuitems" style="display:none">
             <ul>
                 <li onclick="stop();$('#confirm').show();"><img src="img/delete.png" alt="delete"/></li>
