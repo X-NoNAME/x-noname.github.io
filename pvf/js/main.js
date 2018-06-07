@@ -49,6 +49,7 @@ function hideMenuContent(){
 
 function del(){
     var currentPath = $('#content').data('path');
+    
     if(true) {
 
         $.ajax({
@@ -121,7 +122,7 @@ function showRandom() {
         type: 'GET',
         contentType: 'application/json',
         dataType: "json",
-        data: { path: folder, limit:1, offset:pos, fields:'_embedded.items.size,_embedded.items.media_type,_embedded.items.file,_embedded.items.name,_embedded.items.path' },
+        data: { path: folder, limit:1, offset:pos, fields:'_embedded.items.preview,_embedded.items.size,_embedded.items.media_type,_embedded.items.file,_embedded.items.name,_embedded.items.path' },
         success: function (data) {
             console.log('File',data);
             if(data._embedded.items[0]){
@@ -129,14 +130,20 @@ function showRandom() {
                 var file = data._embedded.items[0].file;
                 var path = data._embedded.items[0].path;
                 var size = data._embedded.items[0].size;
+                var preview = data._embedded.items[0].preview;
                 var media_type = data._embedded.items[0].media_type;
                 var content = $("#content");
                 content.html('');
                 content.data('path',path);
-                showPhotoOrVideo({name:name, path:path, file:file, media_type:media_type, size:size},content);
-                if(!isPaused){
-                    timerId = setTimeout(showRandom, 30000);
-                }                
+                content.data('preview',preview);
+                if(media_type==="video" || media_type==="image" ){
+                    showPhotoOrVideo({name:name, path:path, file:file, media_type:media_type, size:size, preview:preview},content);
+                    if(!isPaused){
+                        timerId = setTimeout(showRandom, 30000);
+                    }                
+                }else {
+                    showRandom();
+                }
             }
         },
         error: function(jqXHR, textStatus) {

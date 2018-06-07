@@ -96,14 +96,14 @@ and open the template in the editor.
         <div id="menu" onclick="showMenuContent();" style="opacity: 0.3"><img src="img/settings.png" style="width: 32px;height: 32px" alt="Settings"/></div>
         <div id="menuitems" style="display:none">
             <ul>
-                <li onclick="stop();$('#confirm').show();"><img src="img/delete.png" alt="delete"/></li>
+                <li onclick="stop();$('#confirm>img').attr('src',$('#content').data('preview'));$('#confirm').show();"><img src="img/delete.png" alt="delete"/></li>
                 <li id="plpa" onclick="playPause()"><img src="img/play.png" alt="Stop"/></li>
                 <li id="next" onclick="stop();play();"><img src="img/next.png" alt="Next photo"/></li>
                 <li> </li>
                 <li id="imgstyle" onclick="maximize()"><img src="img/vertical.png" alt="Vertical crop"/></li>
             </ul>
         </div>
-        <div id="confirm" style="display:none">Удалить фото?
+        <div id="confirm" style="display:none"><img src="" alt="Preview"/><br/>Удалить фото?
             <input type="button" value="Да" onclick="$('#confirm').hide();del()"/>
             <input type="button" value="Отмена" onclick="play();$('#confirm').hide();"/>
         </div>
