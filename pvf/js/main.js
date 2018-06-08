@@ -114,9 +114,17 @@ function setHeader(xhr) {
 function go() {
     getFolders();
 }
-
+var usedPos=[];
 function showRandom() {
+    
     var pos = Math.floor(Math.random() * total+1); 
+    var attempt = 0;
+    while(usedPos.indexOf(pos)>=0 && attempt++ < 100){
+        pos = Math.floor(Math.random() * total+1); 
+        console.log(total,pos);
+    }
+    usedPos.push(pos);
+    
     $.ajax({
         url: 'https://cloud-api.yandex.net/v1/disk/resources',
         type: 'GET',
