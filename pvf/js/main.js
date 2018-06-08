@@ -122,7 +122,7 @@ function showRandom() {
         type: 'GET',
         contentType: 'application/json',
         dataType: "json",
-        data: { path: folder, limit:1, offset:pos, fields:'_embedded.items.preview,_embedded.items.size,_embedded.items.media_type,_embedded.items.file,_embedded.items.name,_embedded.items.path' },
+        data: { path: folder, limit:1, offset:pos, fields:'_embedded.items.exif,_embedded.items.preview,_embedded.items.size,_embedded.items.media_type,_embedded.items.file,_embedded.items.name,_embedded.items.path' },
         success: function (data) {
             console.log('File',data);
             if(data._embedded.items[0]){
@@ -130,14 +130,20 @@ function showRandom() {
                 var file = data._embedded.items[0].file;
                 var path = data._embedded.items[0].path;
                 var size = data._embedded.items[0].size;
+                var date_time = data._embedded.items[0].exif.date_time;
                 var preview = data._embedded.items[0].preview;
                 var media_type = data._embedded.items[0].media_type;
                 var content = $("#content");
                 content.html('');
                 content.data('path',path);
                 content.data('preview',preview);
+                console.log('EXIF:',date_time);
+                if(date_time){
+                    var d = new Date(date_time);
+                    date_time=d.toLocaleDateString();
+                }
                 if(media_type==="video" || media_type==="image" ){
-                    showPhotoOrVideo({name:name, path:path, file:file, media_type:media_type, size:size, preview:preview},content);
+                    showPhotoOrVideo({name:name, path:path, file:file, media_type:media_type, size:size, preview:preview, date_time:date_time},content);
                     if(!isPaused){
                         timerId = setTimeout(showRandom, 30000);
                     }                
@@ -246,9 +252,15 @@ function showPhotoOrVideo(mediaObject,content){
                 video[0].defaultPlaybackRate=0.4;
                 video[0].playbackRate=0.4;
                 video[0].play();
+                if(mediaObject.date_time){
+                    $("<div/>",{class:'date', text:mediaObject.date_time}).appendTo(content);
+                }
             }else {
                 var img = $("<div/>",{class:'img',title:mediaObject.name, style:'background-size:'+imgstyle+';background-image:url('+mediaObject.file+')'});
                 img.appendTo(content);
+                if(mediaObject.date_time){
+                    $("<div/>",{class:'date', text:mediaObject.date_time}).appendTo(content);
+                }
             }
           }else {
               console.log(this.status, this);
@@ -259,8 +271,14 @@ function showPhotoOrVideo(mediaObject,content){
         console.log(4);
         var img = $("<div/>",{class:'img',title:mediaObject.name, style:'background-size:'+imgstyle+';background-image:url('+mediaObject.file+')'});
         img.appendTo(content);
+        if(mediaObject.date_time){
+            $("<div/>",{class:'date', text:mediaObject.date_time}).appendTo(content);
+        }
     }else {
         $("<video/>",{src:mediaObject.file, title:mediaObject.name, autoplay:"autoplay"}).appendTo(content);
+        if(mediaObject.date_time){
+            $("<div/>",{class:'date', text:mediaObject.date_time}).appendTo(content);
+        }
     }
 }
 
