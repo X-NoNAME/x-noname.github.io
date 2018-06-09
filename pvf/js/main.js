@@ -112,7 +112,7 @@ function setHeader(xhr) {
 }
 
 function go() {
-    getFolders();
+    //getFolders();
 }
 var usedPos=[];
 function showRandom() {
