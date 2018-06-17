@@ -9,9 +9,12 @@ and open the template in the editor.
         <title>Foto/video frame</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="js/main.js" type="text/javascript"></script>
+
         <script src="js/libs/jquery/jquery.min.js" type="text/javascript"></script>
         <script src="js/libs/jquery.finger/jquery.finger.min.js" type="text/javascript"></script>
+
+        <script src="js/yad.js" type="text/javascript"></script>
+        <script src="js/main.js" type="text/javascript"></script>
         
         <script>
             //0x0112 : "Orientation",
@@ -20,7 +23,7 @@ and open the template in the editor.
               // Handler for .ready() called.
               
                 if(token === null){
-                    document.location = '/pvf/autorize.html';
+                    document.location = 'autorize.html';
                 }else {
                     go();
                 }
