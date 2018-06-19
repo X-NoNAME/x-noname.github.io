@@ -92,33 +92,68 @@ and open the template in the editor.
             }     
             
             @media all and (max-height: 400px) { 
-                li { width: 32px; } 
+                li, #menu>img { width: 32px; }
                 div#confirm { font-size: 18px; right: 70px; padding: 5px;}
                 input[type="button"] {font-size: 18px;}
             }
             @media all and (max-width: 400px) { 
-                li { width: 32px; } 
+                li, #menu>img { width: 32px; }
                 div#confirm { font-size: 18px; right: 70px;  padding: 5px}
                 input[type="button"] {font-size: 18px;}
                     
+            }
+            .controls {
+                filter: invert(50%);
+            }
+            .controls:hover {
+                filter: invert(100%);
+            }
+            .opened {
+                filter: invert(100%);
+            }
+            #folders {
+                display: none;
+                background-color: beige;
+                position: absolute;
+                width: 60%;
+                height: 60%;
+                left:12%;
+                top:12%;
+                padding: 3%;
+            }
+            #selectfolders {
+                width: 50%;
+                margin-left: 25%;
+                font-size: 1.5em;
+            }
+            .disabled {
+                filter: invert(20%);
             }
         </style>
     </head>
     <body>
         <div id="content" onclick="performClick();"></div>
-        <div id="menu" onclick="showMenuContent();" style="opacity: 0.3"><img src="img/settings.png" style="width: 32px;height: 32px" alt="Settings"/></div>
+        <div id="menu" onclick="showMenuContent();"><img class="controls params" src="img/params.png" alt="Settings"/></div>
         <div id="menuitems" style="display:none">
             <ul>
-                <li onclick="stop();$('#confirm>img').attr('src',$('#content').data('preview'));$('#confirm').show();"><img src="img/delete.png" alt="delete"/></li>
-                <li id="plpa" onclick="playPause()"><img src="img/play.png" alt="Stop"/></li>
-                <li id="next" onclick="stop();play();"><img src="img/next.png" alt="Next photo"/></li>
-                <li> </li>
-                <li id="imgstyle" onclick="maximize()"><img src="img/vertical.png" alt="Vertical crop"/></li>
+                <li onclick="confirm();"><img class="controls delete" src="img/trashcan.png" alt="delete"/></li>
+                <li id="plpa" onclick="playPause()"><img class="controls stop" src="img/pause.png" alt="Stop"/></li>
+                <li id="next" onclick="stop();play();"><img class="controls next" src="img/next.png" alt="Next photo"/></li>
+                <li id="folder" onclick="changeFolder()"><img class="controls folder" src="img/folder.png"/></li>
+                <li id="imgstyle" onclick="maximize()"><img class="controls expand" src="img/expand.png" alt="Vertical crop"/></li>
+                <li id="movie" onclick="disableMove();"><img class="controls" src="img/stat.png" alt="Vertical crop"/></li>
             </ul>
         </div>
         <div id="confirm" style="display:none"><img src="" alt="Preview"/><br/>Удалить фото?
             <input type="button" value="Да" onclick="$('#confirm').hide();del()"/>
             <input type="button" value="Отмена" onclick="play();$('#confirm').hide();"/>
+        </div>
+        <div id="folders" style="display: none">
+            <p>Из-за ограничений REST API Яндекса будут отображаться только те файлы, которые находятся в корне папки. Или подготовьте специальную папку с фотограффиями, или используйте папку автозагрузки фотограффий с телефона (Используется по умолчанию)</p>
+            <select id="selectfolders" onchange="setFolder(this.value);">
+                <option value="-1">Выбрать папку</option>
+            </select>
+
         </div>
     </body>
 </html>

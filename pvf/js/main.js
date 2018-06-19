@@ -8,7 +8,20 @@ var folder;
 var total;
 var timerId;
 
+var imgExpand="img/expand.png";
+var imgShrink="img/shrink.png";
+var imgWait="img/wait.png";
+var imgFolder="img/folder.png";
+var imgTrash="img/trashcan.png";
+var imgPrev="img/prev.png";
+var imgNext="img/next.png";
+var imgParams="img/params.png";
+var imgPause="img/pause.png";
+var imgPlay="img/play.png";
+
 var imgstyle='contain';
+
+var isPlayMove= true;
 
 function performClick(){
     if(!document.webkitIsFullScreen){
@@ -20,11 +33,11 @@ function performClick(){
 
 function maximize() {
     if(imgstyle==="contain"){
-        imgstyle="cover"
-        $("#imgstyle").html('<img src="img/horizontal.png" alt="Horizontal crop"/>');
+        imgstyle="cover";
+        $(".expand").attr('src',imgShrink);
     }else {
-        imgstyle="contain"
-        $("#imgstyle").html('<img src="img/vertical.png" alt="Vertical crop"/>');
+        imgstyle="contain";
+        $(".expand").attr('src',imgExpand);
     }
     $("div.img").css("background-size",imgstyle);
 }
@@ -39,16 +52,65 @@ function showMenu(){
 
 function showMenuContent(){
     $("#menuitems").toggle();
+    $('.params').toggleClass('opened');
 }
 
 function hideMenuContent(){
     $("#menuitems").hide();
 }
 
+function togleElements() {
+    $("#folders").toggle();
+    $(".folder").toggleClass('opened');
+}
+
+function changeFolder() {
+    togleElements();
+
+    var sel = $("#selectfolders");
+    if($(".folder").attr('class').indexOf('opened')>=0) {
+        q('GET', "/disk/resources", {
+            path: "/",
+            fields: '_embedded.items.name,_embedded.items.path,_embedded.items.type'
+        })
+            .done(function (data) {
+
+                sel.html('<option value="-1">Выбрать папку</option>');
+                data._embedded.items.forEach(function (item) {
+                    if (item.type == "dir") {
+                        $("<option/>", {value: item.path, text: item.name}).appendTo(sel);
+                    }
+                });
+            });
+    }
+}
+
+function setFolder(fld){
+
+    togleElements();
+    if(fld=="-1") return;
+
+    q('GET', "/disk/resources", {
+        path: fld,
+        fields: '_embedded.total'
+    })
+        .done(function (data) {
+
+            total = data._embedded.total;
+            folder=fld;
+        });
+}
+
 function del(){
     var currentPath = $('#content').data('path');
     q('DELETE','/disk/resources',{path: currentPath})
         .done(play);
+}
+
+function confirm(){
+    stop();
+    $('#confirm>img').attr('src',$('#content').data('preview'));
+    $('#confirm').show();
 }
 
 function playPause(){
@@ -60,16 +122,16 @@ function playPause(){
 }
 
 function play(){
-    $("#plpa").html('<img src="img/play.png" alt="Stop"/>');
+    $(".stop").attr("src",imgPause);
     isPaused = false;
     clearTimeout(timerId);
     timerId = setTimeout(showRandom, 10);
 }
 
 function stop(){
-    $("#plpa").html('<img src="img/pause.png" alt="Play"/>');
-    isPaused = true;
     clearTimeout(timerId);
+    $(".stop").attr("src",imgPlay);
+    isPaused = true;
 }
 
 function go() {
@@ -82,13 +144,12 @@ function showRandom() {
     var pos = Math.floor(Math.random() * total+1); 
     var attempt = 0;
     while(usedPos.indexOf(pos)>=0 && attempt++ < 100){
-        pos = Math.floor(Math.random() * total+1); 
-        console.log(total,pos);
+        pos = Math.floor(Math.random() * total+1);
     }
     usedPos.push(pos);
     q('GET','/disk/resources',{ path: folder, limit:1, offset:pos, fields:'_embedded.items.exif,_embedded.items.preview,_embedded.items.size,_embedded.items.media_type,_embedded.items.file,_embedded.items.name,_embedded.items.path' })
         .done(function (data) {
-            console.log('File',data);
+
             if(data._embedded.items[0]){
                 var name = data._embedded.items[0].name;
                 var file = data._embedded.items[0].file;
@@ -101,7 +162,7 @@ function showRandom() {
 
                 content.data('path',path);
                 content.data('preview',preview);
-                console.log('EXIF:',date_time);
+
                 if(date_time){
                     var d = new Date(date_time);
                     date_time=d.toLocaleDateString();
@@ -122,7 +183,7 @@ function showRandom() {
 function getFiles() {
     q('GET','/disk/resources',{ path: folder, fields: '_embedded.total'})
         .done(function (data) {
-            console.log(data);
+
             var t = data._embedded.total;
             total = t;
             showRandom();
@@ -132,12 +193,12 @@ function getFiles() {
 function getFolders() {
     q('GET','/disk/',{})
         .done(function (data) {
-            console.log(data.system_folders.photostream);
+
             if(data.system_folders.photostream){
                 folder = data.system_folders.photostream;
                 getFiles();
             }else {
-                console.log('Can\'t find data.system_folders.photostream');
+                console.err('Can\'t find data.system_folders.photostream');
             }
         });
 }
@@ -153,18 +214,18 @@ function updateContainer(content,newNode) {
 
 function showPhotoOrVideo(mediaObject,content){
     
-    if(mediaObject.media_type==="image" && mediaObject.size>2*1024*1024){
-        console.log(2);
+    if(mediaObject.media_type==="image" && mediaObject.size>1.5*1024*1024 && isPlayMove){
+
         var xhr = new XMLHttpRequest();
         xhr.open('GET', mediaObject.file, true);
-        console.log(3);
+
         xhr.responseType = 'arraybuffer';
         xhr.onload = function(e) {
           if (this.status == 206 || this.status == 200) {
             var byteArray = new Uint8Array(this.response);
-            console.log("start search index");
+
             var index = findIndex(byteArray);
-            console.log(index);
+
             if(index>=0){
                 var videoArray = byteArray.slice(index);
                 //var photoArray = byteArray.slice(0,index);
@@ -198,13 +259,11 @@ function showPhotoOrVideo(mediaObject,content){
 
 
             }
-          }else {
-              console.log(this.status, this);
           }
         };
         xhr.send();
     }else if(mediaObject.media_type==="image"){
-        console.log(4);
+
         var img = $("<div/>",{class:'img',title:mediaObject.name, style:'background-size:'+imgstyle+';background-image:url('+mediaObject.file+')'});
         if(mediaObject.date_time){
             var meta = $("<div/>",{class:'date', text:mediaObject.date_time});
@@ -214,7 +273,7 @@ function showPhotoOrVideo(mediaObject,content){
 
 
     }else {
-        var vid = $("<video/>",{src:mediaObject.file, title:mediaObject.name, autoplay:"autoplay"});
+        var vid = $("<video/>",{src:mediaObject.file, title:mediaObject.name, autoplay:isPlayMove?"autoplay":false, controls:isPlayMove?false:"controls"});
         if(mediaObject.date_time){
             var meta = $("<div/>",{class:'date', text:mediaObject.date_time});
             meta.appendTo(vid);
@@ -238,9 +297,21 @@ function findIndex(arr){
 		continue top;
 	    }
 	}
-	console.log(prevGood+1);
 	return prevGood+1;
     }
     return -1;
+}
+
+
+
+function disableMove(){
+    $('#movie>img').toggleClass('disabled');
+    isPlayMove=!isPlayMove;
+    if($('#movie>img').attr('class').indexOf('disabled')>=0){
+        $('#movie>img').attr('src','img/dyn.png');
+    }else {
+        $('#movie>img').attr('src','img/stat.png');
+    }
+
 }
 

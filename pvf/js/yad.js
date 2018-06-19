@@ -15,7 +15,7 @@ function handleError(jqXHR,resp){
     if (jqXHR.status == 403) {
         window.location = 'autorize.html'; // redirect page
     } else {
-        console.log("Unknown error: " + resp);
+        console.error("Unknown error: " + resp);
     }
 }
 
