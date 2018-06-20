@@ -21,7 +21,8 @@ and open the template in the editor.
             var token = get_cookie("yat");
             $(function() {
               // Handler for .ready() called.
-              
+
+                $("#content").dblclick(performClick);
                 if(token === null){
                     document.location = 'autorize.html';
                 }else {
@@ -134,7 +135,7 @@ and open the template in the editor.
         </style>
     </head>
     <body>
-        <div id="content" onclick="performClick();"></div>
+        <div id="content"></div>
         <div id="menu" onclick="showMenuContent();"><img class="controls params" src="img/params.png" alt="Settings"/></div>
         <div id="menuitems" style="display:none">
             <ul>
