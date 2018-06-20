@@ -228,6 +228,7 @@ function showPhotoOrVideo(mediaObject,content){
             var index = findIndex(byteArray);
 
             if(index>=0){
+                console.log("MotionPhoto START");
                 var videoArray = byteArray.slice(index);
                 //var photoArray = byteArray.slice(0,index);
                 var blobVideo = new Blob([videoArray], {type: 'video/h264'});
@@ -249,22 +250,24 @@ function showPhotoOrVideo(mediaObject,content){
                 video[0].defaultPlaybackRate=0.4;
                 video[0].playbackRate=0.4;
                 video[0].play();
+                console.log("MotionPhoto STOP");
 
             }else {
+                console.log("NOT MotionPhoto");
                 var img = $("<div/>",{class:'img',title:mediaObject.name, style:'background-size:'+imgstyle+';background-image:url('+mediaObject.file+')'});
                 if(mediaObject.date_time){
                     var meta = $("<div/>",{class:'date', text:mediaObject.date_time});
                     meta.appendTo(img);
                 }
                 updateContainer(content,img);
-
-
             }
+          }else {
+              console.error(this.status, this.statusText, this.responseText);
           }
         };
         xhr.send();
     }else if(mediaObject.media_type==="image"){
-
+                console.log("NOT MotionPhoto 2");
         var img = $("<div/>",{class:'img',title:mediaObject.name, style:'background-size:'+imgstyle+';background-image:url('+mediaObject.file+')'});
         if(mediaObject.date_time){
             var meta = $("<div/>",{class:'date', text:mediaObject.date_time});
@@ -274,6 +277,7 @@ function showPhotoOrVideo(mediaObject,content){
 
 
     }else {
+        console.log("Video");
         var vid = $("<video/>",{src:mediaObject.file, title:mediaObject.name, autoplay:isPlayMove?"autoplay":false, controls:isPlayMove?false:"controls"});
         if(mediaObject.date_time){
             var meta = $("<div/>",{class:'date', text:mediaObject.date_time});
