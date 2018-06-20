@@ -24,6 +24,7 @@ var imgstyle='contain';
 var isPlayMove= true;
 
 function performClick(){
+    console.log('double click');
     if(!document.webkitIsFullScreen){
         window.document.body.webkitRequestFullscreen();
     }else {
