@@ -26,7 +26,7 @@ var isPlayMove= true;
 function performClick(){
     console.log('double click');
     if(!document.webkitIsFullScreen){
-        window.document.getElementById("wrapper").webkitRequestFullscreen();
+        window.document.body.webkitRequestFullscreen();
     }else {
         window.document.webkitCancelFullScreen();
     }
