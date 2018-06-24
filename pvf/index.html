@@ -17,6 +17,7 @@ and open the template in the editor.
         <script src="js/main.js" type="text/javascript"></script>
         
         <script>
+            loadSettings();
             //0x0112 : "Orientation",
             var token = get_cookie("yat");
             $(function() {
@@ -26,7 +27,17 @@ and open the template in the editor.
                 if(token === null){
                     document.location = 'https://x-noname.github.io/pvf/autorize.html';
                 }else {
+
                     go();
+                    if(getSettings('crop')){
+                        maximize();
+                    }
+                    if(getSettings('motion')){
+                        disableMove();
+                    }
+                    if(getSettings('folder')){
+
+                    }
                 }
             });
             
@@ -58,14 +69,6 @@ and open the template in the editor.
                 top: 40px;
                 color: silver;
                 padding: 5px;
-            }
-            div#confirm {
-                position: absolute;
-                right: 160px;
-                top: 40px;
-                font-size: 48px;
-                background-color: coral;
-                padding: 20px;
             }
             ul {
                 margin: 0;
@@ -118,17 +121,26 @@ and open the template in the editor.
                 display: none;
                 background-color: beige;
                 position: absolute;
-                width: 60%;
-                height: 60%;
-                left:12%;
-                top:12%;
-                padding: 3%;
-            }
-            #selectfolders {
                 width: 50%;
-                margin-left: 25%;
+                height: 50%;
+                left:19%;
+                top:19%;
+                padding: 3%;
+                text-align: center;
                 font-size: 1.5em;
             }
+            #confirm {
+                  display: none;
+                  background-color: beige;
+                  position: absolute;
+                  width: 40%;
+                  height: 40%;
+                  left:27%;
+                  top:27%;
+                  padding: 3%;
+                  text-align: center;
+                  font-size: 1.5em;
+              }
             .disabled {
                 filter: invert(20%);
             }
@@ -144,7 +156,7 @@ and open the template in the editor.
                 <li id="plpa" onclick="playPause()"><img class="controls stop" src="img/pause.png" alt="Stop"/></li>
                 <li id="next" onclick="stop();play();"><img class="controls next" src="img/next.png" alt="Next photo"/></li>
                 <li id="folder" onclick="changeFolder()"><img class="controls folder" src="img/folder.png"/></li>
-                <li id="imgstyle" onclick="maximize()"><img class="controls expand" src="img/expand.png" alt="Vertical crop"/></li>
+                <li id="imgstyle" onclick="maximize()"><img class="controls expand" src="img/expand.png" alt="Crop"/></li>
                 <li id="movie" onclick="disableMove();"><img class="controls" src="img/stat.png" alt="Vertical crop"/></li>
             </ul>
         </div>

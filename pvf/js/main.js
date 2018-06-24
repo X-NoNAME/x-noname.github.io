@@ -18,6 +18,7 @@ var imgNext="img/next.png";
 var imgParams="img/params.png";
 var imgPause="img/pause.png";
 var imgPlay="img/play.png";
+var photoFolder;
 
 var imgstyle='contain';
 
@@ -36,9 +37,11 @@ function maximize() {
     if(imgstyle==="contain"){
         imgstyle="cover";
         $(".expand").attr('src',imgShrink);
+        setSettings('crop',true);
     }else {
         imgstyle="contain";
         $(".expand").attr('src',imgExpand);
+        setSettings('crop',false);
     }
     $("div.img").css("background-size",imgstyle);
 }
@@ -70,13 +73,14 @@ function changeFolder() {
 
     var sel = $("#selectfolders");
     if($(".folder").attr('class').indexOf('opened')>=0) {
+        sel.html('<option value="-1">Выбрать папку</option>');
+        $("<option/>", {value: photoFolder, text: 'Папка автозагрузки фотографий'}).appendTo(sel);
+
         q('GET', "/disk/resources", {
             path: "/",
             fields: '_embedded.items.name,_embedded.items.path,_embedded.items.type'
         })
             .done(function (data) {
-
-                sel.html('<option value="-1">Выбрать папку</option>');
                 data._embedded.items.forEach(function (item) {
                     if (item.type == "dir") {
                         $("<option/>", {value: item.path, text: item.name}).appendTo(sel);
@@ -99,6 +103,7 @@ function setFolder(fld){
 
             total = data._embedded.total;
             folder=fld;
+            setSettings('folder',folder);
         });
 }
 
@@ -137,6 +142,35 @@ function stop(){
 
 function go() {
     getFolders();
+}
+
+var settings;
+
+function loadSettings(){
+    var set = localStorage['settings'];
+    if(typeof(set) == "undefined"){
+       set = "{\"folder\":false,\"crop\":false,\"motion\":false}";
+    }
+    settings = JSON.parse(set);
+}
+
+function saveSettings(){
+    localStorage['settings']=JSON.stringify(settings);
+}
+
+function getSettings(key){
+    if(typeof(set) == "undefined"){
+        loadSettings();
+    }
+    return settings[key];
+}
+
+function setSettings(key,value) {
+    if(typeof(set) == "undefined"){
+        loadSettings();
+    }
+    settings[key]=value;
+    saveSettings();
 }
 
 var usedPos=[];
@@ -194,9 +228,14 @@ function getFiles() {
 function getFolders() {
     q('GET','/disk/',{})
         .done(function (data) {
-
             if(data.system_folders.photostream){
-                folder = data.system_folders.photostream;
+                if(getSettings('folder')){
+                    folder=getSettings('folder');
+                }else {
+                    folder = data.system_folders.photostream;
+                    setSettings('folder',folder);
+                }
+                photoFolder = data.system_folders.photostream;
                 getFiles();
             }else {
                 console.err('Can\'t find data.system_folders.photostream');
@@ -314,8 +353,10 @@ function disableMove(){
     isPlayMove=!isPlayMove;
     if($('#movie>img').attr('class').indexOf('disabled')>=0){
         $('#movie>img').attr('src','img/dyn.png');
+        setSettings('motion',true);
     }else {
         $('#movie>img').attr('src','img/stat.png');
+        setSettings('motion',false);
     }
 
 }
