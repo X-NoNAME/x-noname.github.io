@@ -1,8 +1,8 @@
 /* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Kazakov Ivan
+ * mail@x-noname.ru
  */
+
 var isPaused = false;
 var folder;
 var total;
@@ -64,15 +64,15 @@ function hideMenuContent(){
 }
 
 function togleElements() {
-    $("#folders").toggle();
-    $(".folder").toggleClass('opened');
+    // $("#folders").toggle();
+    // $(".folder").toggleClass('opened');
 }
 
 function changeFolder() {
     togleElements();
 
     var sel = $("#selectfolders");
-    if($(".folder").attr('class').indexOf('opened')>=0) {
+
         sel.html('<option value="-1">Выбрать папку</option>');
         $("<option/>", {value: photoFolder, text: 'Папка автозагрузки фотографий'}).appendTo(sel);
 
@@ -87,7 +87,7 @@ function changeFolder() {
                     }
                 });
             });
-    }
+
 }
 
 function setFolder(fld){
@@ -115,7 +115,7 @@ function del(){
 
 function confirm(){
     stop();
-    $('#confirm>img').attr('src',$('#content').data('preview'));
+    //$('#confirm>img').attr('src',$('#content').data('preview'));
     $('#confirm').show();
 }
 
@@ -128,16 +128,18 @@ function playPause(){
 }
 
 function play(){
+    console.log('PLAY', timerId);
+    clearTimeout(timerId);
     $(".stop").attr("src",imgPause);
     isPaused = false;
-    clearTimeout(timerId);
     timerId = setTimeout(showRandom, 10);
 }
 
 function stop(){
+    console.log('STOP', timerId);
+    isPaused = true;
     clearTimeout(timerId);
     $(".stop").attr("src",imgPlay);
-    isPaused = true;
 }
 
 function go() {
@@ -175,7 +177,8 @@ function setSettings(key,value) {
 
 var usedPos=[];
 function showRandom() {
-    
+    if(isPaused)return;
+    var cache = $("#imgcache");
     var pos = Math.floor(Math.random() * total+1); 
     var attempt = 0;
     while(usedPos.indexOf(pos)>=0 && attempt++ < 100){
@@ -197,7 +200,8 @@ function showRandom() {
 
                 content.data('path',path);
                 content.data('preview',preview);
-
+                $("#delprev").attr('src',preview);
+  //              if(media_type==="image")cache.attr('src',file);
                 if(date_time){
                     var d = new Date(date_time);
                     date_time=d.toLocaleDateString();
@@ -212,13 +216,11 @@ function showRandom() {
                 }
             }
         });
-
 }
 
 function getFiles() {
     q('GET','/disk/resources',{ path: folder, fields: '_embedded.total'})
         .done(function (data) {
-
             var t = data._embedded.total;
             total = t;
             showRandom();
@@ -253,46 +255,32 @@ function updateContainer(content,newNode) {
 
 
 function showPhotoOrVideo(mediaObject,content){
-    
     if(mediaObject.media_type==="image" && mediaObject.size>1.5*1024*1024 && isPlayMove){
-
         var xhr = new XMLHttpRequest();
         xhr.open('GET', mediaObject.file, true);
-
         xhr.responseType = 'arraybuffer';
         xhr.onload = function(e) {
           if (this.status == 206 || this.status == 200) {
             var byteArray = new Uint8Array(this.response);
-
             var index = findIndex(byteArray);
-
             if(index>=0){
-                console.log("MotionPhoto START");
                 var videoArray = byteArray.slice(index);
-                //var photoArray = byteArray.slice(0,index);
                 var blobVideo = new Blob([videoArray], {type: 'video/h264'});
-                //var blobPhoto = new Blob([photoArray], {type: 'image/jpg'});
                 var video = $("<video/>",{title:mediaObject.name}); //loop:true
                 video.trigger('load',function(e) {
                   window.URL.revokeObjectURL(video[0].src); // Clean up after yourself.
                 });
                 video[0].src = window.URL.createObjectURL(blobVideo);
-
                 if(mediaObject.date_time){
                     var meta = $("<div/>",{class:'date', text:mediaObject.date_time});
                     meta.appendTo(video);
                 }
                 updateContainer(content,video);
-
-
                 video[0].loop=true;
                 video[0].defaultPlaybackRate=0.4;
                 video[0].playbackRate=0.4;
                 video[0].play();
-                console.log("MotionPhoto STOP");
-
             }else {
-                console.log("NOT MotionPhoto");
                 var img = $("<div/>",{class:'img',title:mediaObject.name, style:'background-size:'+imgstyle+';background-image:url('+mediaObject.file+')'});
                 if(mediaObject.date_time){
                     var meta = $("<div/>",{class:'date', text:mediaObject.date_time});
@@ -306,25 +294,19 @@ function showPhotoOrVideo(mediaObject,content){
         };
         xhr.send();
     }else if(mediaObject.media_type==="image"){
-                console.log("NOT MotionPhoto 2");
         var img = $("<div/>",{class:'img',title:mediaObject.name, style:'background-size:'+imgstyle+';background-image:url('+mediaObject.file+')'});
         if(mediaObject.date_time){
             var meta = $("<div/>",{class:'date', text:mediaObject.date_time});
             meta.appendTo(img);
         }
         updateContainer(content,img);
-
-
     }else {
-        console.log("Video");
         var vid = $("<video/>",{src:mediaObject.file, title:mediaObject.name, autoplay:isPlayMove?"autoplay":false, controls:isPlayMove?false:"controls"});
         if(mediaObject.date_time){
             var meta = $("<div/>",{class:'date', text:mediaObject.date_time});
             meta.appendTo(vid);
         }
         updateContainer(content,vid);
-
-
     }
 }
 
@@ -345,8 +327,6 @@ function findIndex(arr){
     }
     return -1;
 }
-
-
 
 function disableMove(){
     $('#movie>img').toggleClass('disabled');

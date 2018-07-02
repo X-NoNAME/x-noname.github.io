@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
+Kazakov Ivan
+mail@x-noname.ru
 -->
 <html>
     <head>
-        <title>Foto/video frame</title>
+        <title>Фоторамка для планшета с поддержкой Motion photo и видео</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="img/stat.png">
+        <link rel="apple-touch-icon image_src" href="img/stat.pn">
+
 
         <script src="js/libs/jquery/jquery.min.js" type="text/javascript"></script>
         <script src="js/libs/jquery.finger/jquery.finger.min.js" type="text/javascript"></script>
-
         <script src="js/yad.js" type="text/javascript"></script>
         <script src="js/main.js" type="text/javascript"></script>
         
@@ -22,12 +23,10 @@ and open the template in the editor.
             var token = get_cookie("yat");
             $(function() {
               // Handler for .ready() called.
-
                 $("#content").dblclick(performClick);
                 if(token === null){
                     document.location = 'https://x-noname.github.io/pvf/autorize.html';
                 }else {
-
                     go();
                     if(getSettings('crop')){
                         maximize();
@@ -39,6 +38,51 @@ and open the template in the editor.
 
                     }
                 }
+
+
+
+                //close popup1
+                $('#popup1').on('click', function(event){
+                    if( $(event.target).is('.cd-popup-close') || $(event.target).is('.cd-popup') || $(event.target).is('.but-close')) {
+                        event.preventDefault();
+                        $(this).removeClass('is-visible');
+                        play();
+                    }else if( $(event.target).is('.but-yes')){
+                        event.preventDefault();
+                        del();
+                        $(this).removeClass('is-visible');
+                    }
+                });
+
+                //close popup when clicking the esc keyboard button
+                $(document).keyup(function(event){
+                    if(event.which=='27' && $('#popup1').hasClass('is-visible')){
+                        $('#popup1').removeClass('is-visible');
+                        play();
+                    }
+                });
+
+                //close popup1
+                $('#popup2').on('click', function(event){
+                    if( $(event.target).is('.cd-popup-close') || $(event.target).is('.cd-popup') || $(event.target).is('.but-close')) {
+                        event.preventDefault();
+                        $(this).removeClass('is-visible');
+
+                    }else if( $(event.target).is('.but-yes')){
+                        event.preventDefault();
+                        setFolder($('#selectfolders').val());
+                        $(this).removeClass('is-visible');
+                    }
+                });
+
+                //close popup when clicking the esc keyboard button
+                $(document).keyup(function(event){
+                    if(event.which=='27' && $('#popup2').hasClass('is-visible')){
+                        $('#popup2').removeClass('is-visible');
+
+                    }
+                });
+
             });
             
         </script>
@@ -145,7 +189,14 @@ and open the template in the editor.
             .disabled {
                 filter: invert(20%);
             }
+
+
+
+
+
         </style>
+        <link crossorigin="anonymous" media="all" rel="stylesheet" href="confirm.css">
+
     </head>
     <body>
 
@@ -153,24 +204,53 @@ and open the template in the editor.
         <div id="menu" onclick="showMenuContent();"><img class="controls params" src="img/params.png" alt="Settings"/></div>
         <div id="menuitems" style="display:none">
             <ul>
-                <li onclick="confirm();"><img class="controls delete" src="img/trashcan.png" alt="delete"/></li>
+                <li onclick="stop();$('#popup1').addClass('is-visible');"><img class="controls delete" src="img/trashcan.png" alt="delete"/></li>
                 <li id="plpa" onclick="playPause()"><img class="controls stop" src="img/pause.png" alt="Stop"/></li>
                 <li id="next" onclick="stop();play();"><img class="controls next" src="img/next.png" alt="Next photo"/></li>
-                <li id="folder" onclick="changeFolder()"><img class="controls folder" src="img/folder.png"/></li>
+                <li id="folder" onclick="changeFolder();$('#popup2').addClass('is-visible');"><img class="controls folder" src="img/folder.png"/></li>
                 <li id="imgstyle" onclick="maximize()"><img class="controls expand" src="img/expand.png" alt="Crop"/></li>
                 <li id="movie" onclick="disableMove();"><img class="controls" src="img/stat.png" alt="Vertical crop"/></li>
             </ul>
         </div>
-        <div id="confirm" style="display:none"><img src="" alt="Preview"/><br/>Удалить фото?
+        <!--<div id="confirm" style="display:none"><img id="delprev" src="" alt="Preview"/><br/>Удалить фото?
             <input type="button" value="Да" onclick="$('#confirm').hide();del()"/>
             <input type="button" value="Отмена" onclick="play();$('#confirm').hide();"/>
-        </div>
-        <div id="folders" style="display: none">
+        </div>-->
+        <!--<div id="folders" style="display: none">
             <p>Из-за ограничений REST API Яндекса будут отображаться только те файлы, которые находятся в корне папки. Или подготовьте специальную папку с фотограффиями, или используйте папку автозагрузки фотограффий с телефона (Используется по умолчанию)</p>
             <select id="selectfolders" onchange="setFolder(this.value);">
                 <option value="-1">Выбрать папку</option>
             </select>
+        </div>-->
+        <div id="invisible" style="display:none">
+            <img id="imgcache" src="" alt="none"/>
+        </div>
+        <div id="popup1" class="cd-popup" role="alert" >
+            <div class="cd-popup-container">
+                <p id="title">Вы точно хотите удалить файл?</p>
+                <img id="delprev" src="" alt="Preview"/>
+                <ul class="cd-buttons">
+                    <li><a href="#0" class="but-yes">Да</a></li>
+                    <li><a href="#0" class="but-close">Нет</a></li>
+                </ul>
+                <a href="#0" class="cd-popup-close img-replace"> </a>
+            </div> <!-- cd-popup-container -->
+        </div> <!-- cd-popup -->
+        <div id="popup2" class="cd-popup" role="alert" >
+            <div class="cd-popup-container">
+                <p>Выбор папки</p>
+                <small>Из-за ограничений REST API Яндекса будут отображаться только те файлы, которые находятся в корне папки. Или подготовьте специальную папку с фотограффиями, или используйте папку автозагрузки фотограффий с телефона (Используется по умолчанию)</small>
+                <br/>
+                <select id="selectfolders">
+                    <option value="-1">Выбрать папку</option>
+                </select>
 
+                <ul class="cd-buttons">
+                    <li><a href="#0" class="but-yes">Да</a></li>
+                    <li><a href="#0" class="but-close">Нет</a></li>
+                </ul>
+                <a href="#0" class="cd-popup-close img-replace"> </a>
+            </div> <!-- cd-popup-container -->
         </div>
 
     </body>

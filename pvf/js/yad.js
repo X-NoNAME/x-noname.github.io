@@ -1,3 +1,7 @@
+/*
+ * Kazakov Ivan
+ * mail@x-noname.ru
+ */
 function get_cookie(cookie_name)
 {
     var results = document.cookie.match('(^|;) ?' + cookie_name + '=([^;]*)(;|$)');
